@@ -1,0 +1,17 @@
+[multiqc.hooks.v1]
+after_modules = plugins.utils.hooks:after_modules
+before_config = plugins.utils.hooks:before_config
+execution_start = plugins.utils.hooks:execution_start
+
+[multiqc.modules.v1]
+bismark = plugins.modules.bismark_ext:MultiqcModule
+correlation = plugins.modules.correlation:MultiqcModule
+cutadapt = plugins.modules.cutadapt_ext:MultiqcModule
+download = plugins.modules.download:MultiqcModule
+fastqc = plugins.modules.fastqc_ext:MultiqcModule
+methyldackel = plugins.modules.methyldackel:MultiqcModule
+samtools = plugins.modules.samtools_ext:MultiqcModule
+
+[multiqc.templates.v1]
+zymo = plugins.templates.zymo
+

@@ -1,0 +1,13 @@
+intro_text: "This report includes summaries of data quality, data processing, \
+    and snapshots of the results for your DNA methylation study. This report \
+    should assist you to get a general picture of the study and to spot any \
+    irregularities in the sample or data. Additional data is provided with \
+    Full Bioinformatic Analysis package."
+
+report_section_order:
+    software_versions:
+        order: -1000
+    nf-core-ampliseq-summary:
+        order: -1001
+
+export_plots: true
