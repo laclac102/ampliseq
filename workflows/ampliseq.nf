@@ -24,13 +24,9 @@ if (!params.RV_primer) { exit 1, "Option --RV_primer missing" }
     CONFIG FILES
 ========================================================================================
 */
-// def mqcConfig = Channel
-//     .fromPath("${baseDir}/assets/multiqc_config.yaml", checkIfExists: true)
-def mqcPlugins = Channel
-    .fromPath("${baseDir}/assets/mqc_plugins/", checkIfExists: true)
 
 ch_multiqc_config        = file("$projectDir/assets/multiqc_config.yaml", checkIfExists: true)
-// ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
+ch_multiqc_custom_config = params.multiqc_config ? Channel.fromPath(params.multiqc_config) : Channel.empty()
 
 /*
 ========================================================================================
@@ -114,6 +110,7 @@ include { QIIME2_INTAX                  } from '../modules/local/qiime2_intax'
 include { PICRUST                       } from '../modules/local/picrust'
 include { SBDIEXPORT                    } from '../modules/local/sbdiexport'
 include { SBDIEXPORTREANNOTATE          } from '../modules/local/sbdiexportreannotate'
+// include { COMPOSITION_BAR_PLOT          } from '../modules/local/composition_bar_plot'
 
 //
 // SUBWORKFLOW: Consisting of a mix of local and nf-core/modules
@@ -349,8 +346,6 @@ workflow AMPLISEQ {
     }
 
     //QIIME2
-    // qiime_ref_taxonomy: "Name of supported database, and optionally also version number"
-    // classifier: Path to QIIME2 trained classifier file (typically *-classifier.qza)
     if ( run_qiime2 ) {
         if (params.qiime_ref_taxonomy && !params.classifier) {
             QIIME2_PREPTAX (
@@ -464,7 +459,7 @@ workflow AMPLISEQ {
             )
         }
     }
-
+    // COMPOSITION_BAR_PLOT (QIIME2_EXPORT.out.rel_tax.flatten(), tax_agglom_min, tax_agglom_max)
     //
     // MODULE: Predict functional potential of a bacterial community from marker genes with Picrust2
     //
@@ -498,8 +493,8 @@ workflow AMPLISEQ {
         ch_workflow_summary = Channel.value(workflow_summary)
 
         ch_multiqc_files = Channel.empty()
-        ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config ))
-        // ch_multiqc_files = ch_multiqc_files.mix(mqcPlugins.ifEmpty([]))
+        ch_multiqc_files = ch_multiqc_files.mix(Channel.from(ch_multiqc_config))
+        ch_multiqc_files = ch_multiqc_files.mix(ch_multiqc_custom_config.collect().ifEmpty([]))
         ch_multiqc_files = ch_multiqc_files.mix(ch_workflow_summary.collectFile(name: 'workflow_summary_mqc.yaml'))
         ch_multiqc_files = ch_multiqc_files.mix(CUSTOM_DUMPSOFTWAREVERSIONS.out.mqc_yml.collect())
         if (!params.skip_fastqc) {
@@ -509,12 +504,13 @@ workflow AMPLISEQ {
 
         MULTIQC (
             ch_multiqc_files.collect(),
-            mqcPlugins
+            QIIME2_EXPORT.out.report.collect()
         )
         multiqc_report = MULTIQC.out.report.toList()
         ch_versions    = ch_versions.mix(MULTIQC.out.versions)
     }
 }
+ 
 
 /*
 ========================================================================================

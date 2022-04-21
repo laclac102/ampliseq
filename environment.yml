@@ -1,0 +1,22 @@
+name: ampliseq-test
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+  - qiime2
+dependencies:
+  ## conda-forge packages
+  - plotly=5.7.0
+  - pybase64=1.2.1
+  - dash-bio
+  - seaborn
+  - scikit-bio=0.5.5
+  - scikit-learn=0.23.1
+  - r-base=4.0.2=he766273_1
+  - r-openxlsx=4.2.2=r40h0357c0b_0
+  - pandas=1.1.5=py37hdc94413_0
+  - matplotlib=3.3.2=0
+  - scipy=1.5.3=py37h8911b10_0
+  - boto3=1.16.34=py_0
+  - openpyxl=3.0.5=py_0 # Needed for exporting to EXCEL in python
+  - xorg-libxaw=1.0.13=h516909a_1002 # Needed for jpeg function in R

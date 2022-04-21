@@ -1,0 +1,16 @@
+[multiqc.hooks.v1]
+before_config = multiqc_zymo.custom_code:plugin_before_config
+execution_start = multiqc_zymo.custom_code:plugin_execution_start
+
+[multiqc.modules.v1]
+DESeq2 = multiqc_zymo.modules.DESeq2:MultiqcModule
+Trim_Galore = multiqc_zymo.modules.Trim_Galore:MultiqcModule
+download_data = multiqc_zymo.modules.download_data:MultiqcModule
+gProfiler = multiqc_zymo.modules.gProfiler:MultiqcModule
+plot_ERCC = multiqc_zymo.modules.plot_ERCC:MultiqcModule
+plot_gene_heatmap = multiqc_zymo.modules.plot_gene_heatmap:MultiqcModule
+plot_sample_distance = multiqc_zymo.modules.plot_sample_distance:MultiqcModule
+
+[multiqc.templates.v1]
+zymo = multiqc_zymo.templates.zymo
+

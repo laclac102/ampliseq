@@ -1,8 +1,8 @@
 process QIIME2_EXPORT_RELTAX {
     label 'process_low'
 
-    conda (params.enable_conda ? { exit 1 "QIIME2 has no conda package" } : null)
-    container "quay.io/qiime2/core:2021.8"
+    // conda (params.enable_conda ? { exit 1 "QIIME2 has no conda package" } : null)
+    // container "quay.io/qiime2/core:2021.8"
 
     input:
     path(table)
@@ -13,6 +13,7 @@ process QIIME2_EXPORT_RELTAX {
     output:
     path("*.tsv")        , emit: tsv
     path "versions.yml"  , emit: versions
+    path("*.html")       , emit: html
 
     script:
     """
@@ -41,6 +42,9 @@ process QIIME2_EXPORT_RELTAX {
             -i relative-table-\$i/feature-table.biom \
             -o rel-table-\$i.tsv --to-tsv
     done
+
+    #plot the composition bar plot from relative abundance table for each of level of taxonomy
+        comp_bar_plot.py
 
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
